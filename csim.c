@@ -14,12 +14,12 @@ typedef struct
 
 typedef struct 
 {
-	int s;
-	int S;
-	int b;
-	int B;
-	int t;
-	int E;
+	int s;  // 2^s sets (set bits)
+	int S;  // Number of sets
+	int b;  // 2^b blocks (block bits)
+	int B;  // Number of blocks
+	int t;  // tag bits
+	int E;  // Number of lines
 	line** sets;
 } cache;
 
@@ -30,6 +30,7 @@ typedef struct
 	int sum_evictions;
 } summary;
 
+/* Finds and returns the least recently used line inside of a set. */
 int LRUfinder(cache* lru_cache, int lru_set)
 {
 	int temp = -2;
@@ -47,22 +48,24 @@ int LRUfinder(cache* lru_cache, int lru_set)
 
 summary* simulate(FILE* f, cache* sim_c, summary* sum)
 {
-	int misses = 0;
-	int hits = 0;
-	int evictions = 0;
-	char* inst = malloc(sizeof(char));
-	unsigned long int* parse_addr = malloc(sizeof(unsigned long int));
-	int* useless_size = malloc(sizeof(int));
+	int misses = 0;             										// counter for total misses
+	int hits = 0;              											// counter for total hits
+	int evictions = 0;          										// counter for total evictions
+	char* inst = malloc(sizeof(char)); 									// space for type of instruction
+	unsigned long int* parse_addr = malloc(sizeof(unsigned long int));  // given address
+	int* useless_size = malloc(sizeof(int));							// number of bytes accessed by operation
 
 	while(fscanf(f, "%c %lx,%i", inst, parse_addr, useless_size) > 0) {
 		if(*inst == 'I') {
 		}
+																		// if instruction load, do nothing
 		else if(*inst == 'L' || *inst == 'S' || *inst == 'M') {
 			unsigned long long int tag = (*parse_addr >> sim_c -> b) >> sim_c -> s;
 			int set = ((*parse_addr << sim_c -> t) >> sim_c -> t)  >> sim_c -> b;
 			int checked = 0;
 			for (int i = 0; i < sim_c -> E; ++i)
 			{
+																		// logic for attempt leading to a hit
 				if(sim_c -> sets[set][i].validb == 1 && sim_c -> sets[set][i].tag == tag && checked != 1) {
 					sim_c -> sets[set][i].LRUholder = -1;
 					hits++;
@@ -72,6 +75,7 @@ summary* simulate(FILE* f, cache* sim_c, summary* sum)
 						sim_c -> sets[set][j].LRUholder++;
 					}
 				}
+																		// logic for attempt leading to a cold miss
 				else if(sim_c -> sets[set][i].validb != 1 && checked != 1) {
 					misses++;
 					checked = 1;
@@ -84,6 +88,7 @@ summary* simulate(FILE* f, cache* sim_c, summary* sum)
 						sim_c -> sets[set][j].LRUholder++;
 					}
 				}
+																		// logic for attempt leading to an eviction
 				else if(sim_c -> sets[set][i].validb == 1 && sim_c -> sets[set][i].tag != tag && checked != 1) {
 					if(i == (sim_c -> E - 1)){
 						misses++;
