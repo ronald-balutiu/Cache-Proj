@@ -1,3 +1,5 @@
+## Cache Project
+
 #### About:
 This project was created in C as part of my Computer Systems class to simulate the properties and actions of a working cache. The mock cache takes in a Valgrind trace file as well as cache parameters (s,E,b) and then outputs the number of hits, misses, and evictions that should have occurred inside of the cache. The project was originally based off of a CMU lab.
 
