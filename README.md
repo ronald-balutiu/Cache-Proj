@@ -1,7 +1,5 @@
-### Based off of Cache Lab from CMSC 15400: Intro to Computer Systems at UChicago.
-
 #### About:
-This project was created in C as part of my Computer Systems class to simulate the properties and actions of a working cache. The mock cache takes in a Valgrind trace file as well as cache parameters (s,E,b) and then outputs the number of hits, misses, and evictions that should have occurred inside of the cache. The lab was originally based off of a CMU lab.
+This project was created in C as part of my Computer Systems class to simulate the properties and actions of a working cache. The mock cache takes in a Valgrind trace file as well as cache parameters (s,E,b) and then outputs the number of hits, misses, and evictions that should have occurred inside of the cache. The project was originally based off of a CMU lab.
 
 In this implementation, s refers to the number of set index bits, E refers to the number of lines per set, and b refers to the number of block bits. To find the number of sets and blocks, raise 2 to the power of s and b respectively.
 
